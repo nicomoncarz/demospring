@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 
+import java.time.LocalDate;
+
 import com.nicolasmoncarz.requestcache.request.Request;
 import com.nicolasmoncarz.requestcache.request.RequestController;
 import com.nicolasmoncarz.requestcache.request.RequestService;
@@ -24,6 +26,9 @@ import org.springframework.boot.web.server.LocalServerPort;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class RequestCacheApplicationTests {
+
+	private static final String URL = "url";
+	private static final String URL_FORMAT = "http://localhost:%d/request?url=url";
 
 	@Autowired
 	@InjectMocks
@@ -50,20 +55,18 @@ class RequestCacheApplicationTests {
 
 	@Test
 	public void getRequestSuccessful() throws IOException {
-		Request request = new Request("url", "response");
-        Mockito.when(requestService.findOrCreate("url")).thenReturn(request);
-		assertEquals(
-			this.restTemplate.getForObject("http://localhost:" + port + "/request?url=url",
-			String.class
-		), "response");
+		Request request = new Request(URL, "response", LocalDate.now());
+        Mockito.when(requestService.findOrCreate(URL)).thenReturn(request);
+		assertEquals("response",
+			this.restTemplate.getForObject(String.format(URL_FORMAT, port), String.class)
+		);
 	}
 
 	@Test
 	public void getRequestThrowingDBError() throws IOException {
-		Mockito.when(requestService.findOrCreate("url")).thenThrow(JDBCException.class);
-		assertEquals(
-			this.restTemplate.getForObject("http://localhost:" + port + "/request?url=url",
-			String.class
-		), "DB Error");
+		Mockito.when(requestService.findOrCreate(URL)).thenThrow(JDBCException.class);
+		assertEquals("DB Error",
+			this.restTemplate.getForObject(String.format(URL_FORMAT, port), String.class)
+		);
 	}
 }
