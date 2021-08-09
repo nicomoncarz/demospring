@@ -10,9 +10,9 @@
 	</parent>
 	<groupId>com.nicolasmoncarz</groupId>
 	<artifactId>requestcache</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<name>requestcache</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Request Cache</description>
 	<properties>
 		<java.version>11</java.version>
 	</properties>
